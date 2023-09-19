@@ -91,6 +91,7 @@ namespace Calculator_2023
                     myButton.Height = btnHeight;
                     myButton.Top = posY;
                     myButton.Left = posX;
+                    myButton.Click += MyButton_Click;
                     posX += myButton.Width;
 
                     this.Controls.Add(myButton);
@@ -98,6 +99,12 @@ namespace Calculator_2023
                 posX = 0;
                 posY += btnHeight;
             }
+        }
+
+        private void MyButton_Click(object sender, EventArgs e)
+        {
+            Button clickedButton = (Button)sender;
+            lblResult.Text = clickedButton.Text;
         }
     }
 }
