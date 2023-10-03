@@ -151,7 +151,8 @@ namespace Calculator_2023
 
                     break;
                 case SymbolType.ClearAll:
-        
+                    lblResult.Text = "0";
+                    lastOperator = ' ';
                     break;
                 default:
                     break;
