@@ -52,7 +52,7 @@ namespace Calculator_2023
         };
 
         float lblResultBaseFontSize;
-        const int lblResultWidthMargin = 24;
+        const int lblResultWidthMargin = 25;
         const int lblResultMaxDigit = 25;
 
         char lastOperator = ' ';
@@ -174,7 +174,7 @@ namespace Calculator_2023
             lblResult.Text = "0";
             lblHistory.Text = "";
         }
-
+            
         private void ManageSpecialOperator(BtnStruct clickedButtonStruct)
         {
             operand2 = decimal.Parse(lblResult.Text);
@@ -204,17 +204,11 @@ namespace Calculator_2023
             if (lastOperator == ' ')
             {
                 operand1 = decimal.Parse(lblResult.Text);
-                if (clickedButtonStruct.Content != '=')
-                {
-                    lastOperator = clickedButtonStruct.Content;
-                }
+                if (clickedButtonStruct.Content != '=') lastOperator = clickedButtonStruct.Content;
             }
             else
             {
-                if (lastButtonClicked.Content != '=')
-                {
-                    operand2 = decimal.Parse(lblResult.Text);
-                }
+                if (lastButtonClicked.Content != '=') operand2 = decimal.Parse(lblResult.Text);
                 switch (lastOperator)
                 {
                     case '+':
@@ -223,25 +217,22 @@ namespace Calculator_2023
                     case '-':
                         result = operand1 - operand2;
                         break;
-                    case '×':
+                    case '\u00D7':
                         result = operand1 * operand2;
                         break;
-                    case '÷':
+                    case '\u00F7':
                         result = operand1 / operand2;
                         break;
                     default:
                         break;
                 }
-                lblResult.Text = result.ToString();
+                operand1 = result;
                 if (clickedButtonStruct.Content != '=')
                 {
                     lastOperator = clickedButtonStruct.Content;
-                    if (lastButtonClicked.Content == '=')
-                    {
-                        operand2 = 0;
-                    }
+                    if (lastButtonClicked.Content == '=') operand2 = 0;
                 }
-                operand1 = result;
+                lblResult.Text = result.ToString();
             }
         }
 
@@ -269,14 +260,14 @@ namespace Calculator_2023
                 lblResult.Text = "0";
                 return;
             }
-            if (lblResult.Text.Length>0)
+            if (lblResult.Text.Length > 0)
             {
                 decimal num = decimal.Parse(lblResult.Text);
                 NumberFormatInfo nfi = new CultureInfo("it-IT", false).NumberFormat;
                 int decimalSeparatorPosition = lblResult.Text.IndexOf(",");
                 nfi.NumberDecimalDigits = decimalSeparatorPosition == -1 ? 0 : lblResult.Text.Length - decimalSeparatorPosition - 1;
                 string stOut = num.ToString("N", nfi);
-                if(lblResult.Text.IndexOf(",") == lblResult.Text.Length-1)
+                if (lblResult.Text.IndexOf(",") == lblResult.Text.Length - 1)
                 {
                     stOut += ",";
                 }
@@ -288,7 +279,7 @@ namespace Calculator_2023
             }
             int textWidth = TextRenderer.MeasureText(lblResult.Text, lblResult.Font).Width;
             float newSize = lblResult.Font.Size * (((float)lblResult.Size.Width - lblResultWidthMargin) / textWidth);
-            if(newSize>lblResultBaseFontSize)
+            if (newSize > lblResultBaseFontSize)
             {
                 newSize = lblResultBaseFontSize;
             }

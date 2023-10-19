@@ -74,7 +74,7 @@
             this.ShowIcon = false;
             this.Text = "Calculator";
             this.Load += new System.EventHandler(this.FormMain_Load);
-            this.ResumeLayout(false);
+            this.ResumeLayout(false);   
             this.PerformLayout();
 
         }
