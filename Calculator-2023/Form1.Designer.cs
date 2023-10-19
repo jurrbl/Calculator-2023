@@ -30,6 +30,7 @@
         {
             this.lblResult = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblHistory = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // lblResult
@@ -42,7 +43,6 @@
             this.lblResult.TabIndex = 0;
             this.lblResult.Text = "0";
             this.lblResult.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-
             // 
             // panel1
             // 
@@ -52,11 +52,20 @@
             this.panel1.Size = new System.Drawing.Size(324, 35);
             this.panel1.TabIndex = 1;
             // 
+            // lblHistory
+            // 
+            this.lblHistory.AutoSize = true;
+            this.lblHistory.Location = new System.Drawing.Point(252, 38);
+            this.lblHistory.Name = "lblHistory";
+            this.lblHistory.Size = new System.Drawing.Size(0, 13);
+            this.lblHistory.TabIndex = 2;
+            // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(324, 481);
+            this.Controls.Add(this.lblHistory);
             this.Controls.Add(this.lblResult);
             this.Controls.Add(this.panel1);
             this.MaximizeBox = false;
@@ -65,6 +74,7 @@
             this.Text = "Calculator";
             this.Load += new System.EventHandler(this.Calculator_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -72,6 +82,7 @@
 
         private System.Windows.Forms.Label lblResult;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label lblHistory;
     }
 }
 
