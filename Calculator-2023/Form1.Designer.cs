@@ -62,7 +62,6 @@
             this.lblHistory.Name = "lblHistory";
             this.lblHistory.Size = new System.Drawing.Size(296, 25);
             this.lblHistory.TabIndex = 0;
-            this.lblHistory.Text = "(expression)";
             this.lblHistory.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // Calculator
