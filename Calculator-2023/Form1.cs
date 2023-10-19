@@ -8,7 +8,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using static Calculator_2023.Calculator;
 using System.Windows.Forms;
 
 namespace Calculator_2023
@@ -52,7 +51,7 @@ namespace Calculator_2023
         };
 
         float lblResultBaseFontSize;
-        const int lblResultWidthMargin = 25;
+        const int lblResultWidthMargin = 24;
         const int lblResultMaxDigit = 25;
 
         char lastOperator = ' ';
@@ -197,6 +196,7 @@ namespace Calculator_2023
             }
             lblResult.Text = result.ToString();
             lblHistory.Text = "";
+                
         }
 
         private void ManageOperator(BtnStruct clickedButtonStruct)
@@ -262,27 +262,21 @@ namespace Calculator_2023
             }
             if (lblResult.Text.Length > 0)
             {
-                decimal num = decimal.Parse(lblResult.Text);
+                decimal num = decimal.Parse(lblResult.Text); string stOut = "";
                 NumberFormatInfo nfi = new CultureInfo("it-IT", false).NumberFormat;
                 int decimalSeparatorPosition = lblResult.Text.IndexOf(",");
-                nfi.NumberDecimalDigits = decimalSeparatorPosition == -1 ? 0 : lblResult.Text.Length - decimalSeparatorPosition - 1;
-                string stOut = num.ToString("N", nfi);
-                if (lblResult.Text.IndexOf(",") == lblResult.Text.Length - 1)
-                {
-                    stOut += ",";
-                }
+                nfi.NumberDecimalDigits = decimalSeparatorPosition == -1 ?
+                    0 :
+                    lblResult.Text.Length - decimalSeparatorPosition - 1;
+                stOut = num.ToString("N", nfi);
+                if (lblResult.Text.IndexOf(",") == lblResult.Text.Length - 1) stOut += ",";
                 lblResult.Text = stOut;
             }
-            if (lblResult.Text.Length > lblResultMaxDigit)
-            {
-                lblResult.Text = lblResult.Text.Substring(0, lblResultMaxDigit);
-            }
+            if (lblResult.Text.Length > lblResultMaxDigit) lblResult.Text = lblResult.Text.Substring(0, lblResultMaxDigit);
+
             int textWidth = TextRenderer.MeasureText(lblResult.Text, lblResult.Font).Width;
             float newSize = lblResult.Font.Size * (((float)lblResult.Size.Width - lblResultWidthMargin) / textWidth);
-            if (newSize > lblResultBaseFontSize)
-            {
-                newSize = lblResultBaseFontSize;
-            }
+            if (newSize > lblResultBaseFontSize) newSize = lblResultBaseFontSize;
             lblResult.Font = new Font("Segoe UI", newSize, FontStyle.Regular);
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Calculator_2023
 {
-    partial class Calculator
+    partial class Calculator 
     {
         /// <summary>
         /// Variabile di progettazione necessaria.
@@ -29,60 +29,65 @@
         private void InitializeComponent()
         {
             this.lblResult = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.panelTop = new System.Windows.Forms.Panel();
             this.lblHistory = new System.Windows.Forms.Label();
+            this.panelTop.SuspendLayout();
             this.SuspendLayout();
             // 
             // lblResult
             // 
             this.lblResult.Dock = System.Windows.Forms.DockStyle.Top;
             this.lblResult.Font = new System.Drawing.Font("Segoe UI Semibold", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblResult.Location = new System.Drawing.Point(0, 35);
+            this.lblResult.Location = new System.Drawing.Point(0, 30);
             this.lblResult.Name = "lblResult";
-            this.lblResult.Size = new System.Drawing.Size(324, 80);
+            this.lblResult.Size = new System.Drawing.Size(320, 80);
             this.lblResult.TabIndex = 0;
             this.lblResult.Text = "0";
             this.lblResult.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblResult.TextChanged += new System.EventHandler(this.lblResult_TextChanged);
             // 
-            // panel1
+            // panelTop
             // 
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(324, 35);
-            this.panel1.TabIndex = 1;
-            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
+            this.panelTop.Controls.Add(this.lblHistory);
+            this.panelTop.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panelTop.Location = new System.Drawing.Point(0, 0);
+            this.panelTop.Name = "panelTop";
+            this.panelTop.Size = new System.Drawing.Size(320, 30);
+            this.panelTop.TabIndex = 1;
             // 
             // lblHistory
             // 
-            this.lblHistory.AutoSize = true;
-            this.lblHistory.Location = new System.Drawing.Point(252, 38);
+            this.lblHistory.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblHistory.Location = new System.Drawing.Point(12, 4);
             this.lblHistory.Name = "lblHistory";
-            this.lblHistory.Size = new System.Drawing.Size(0, 13);
-            this.lblHistory.TabIndex = 2;
+            this.lblHistory.Size = new System.Drawing.Size(296, 25);
+            this.lblHistory.TabIndex = 0;
+            this.lblHistory.Text = "(expression)";
+            this.lblHistory.TextAlign = System.Drawing.ContentAlignment.BottomRight;
             // 
             // Calculator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(324, 481);
-            this.Controls.Add(this.lblHistory);
+            this.ClientSize = new System.Drawing.Size(320, 477);
             this.Controls.Add(this.lblResult);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panelTop);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MaximizeBox = false;
             this.Name = "Calculator";
             this.ShowIcon = false;
-            this.Text = "Calculator";
+            this.Text = "Calcolatrice";
             this.Load += new System.EventHandler(this.FormMain_Load);
-            this.ResumeLayout(false);   
-            this.PerformLayout();
+            this.panelTop.ResumeLayout(false);
+            this.ResumeLayout(false);
 
         }
 
         #endregion
 
         private System.Windows.Forms.Label lblResult;
-        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Label lblHistory;
     }
 }
+
