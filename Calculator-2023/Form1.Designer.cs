@@ -51,6 +51,7 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(324, 35);
             this.panel1.TabIndex = 1;
+            this.panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.panel1_Paint);
             // 
             // lblHistory
             // 
@@ -72,7 +73,7 @@
             this.Name = "Calculator";
             this.ShowIcon = false;
             this.Text = "Calculator";
-            this.Load += new System.EventHandler(this.Calculator_Load);
+            this.Load += new System.EventHandler(this.FormMain_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -85,4 +86,3 @@
         private System.Windows.Forms.Label lblHistory;
     }
 }
-

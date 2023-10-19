@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime;
-using System.Windows.Forms;
+using System.Text;
+using System.Threading.Tasks;
 using static Calculator_2023.Calculator;
+using System.Windows.Forms;
 
 namespace Calculator_2023
 {
@@ -17,18 +22,17 @@ namespace Calculator_2023
             SpecialOperator,
             DecimalPoint,
             PlusMinusSign,
-            BackSpace,
+            Backspace,
             ClearAll,
             ClearEntry,
             Undefined
-
         }
 
         public struct BtnStruct
         {
             public char Content;
-            public bool IsBold;
             public SymbolType Type;
+            public bool IsBold;
             public BtnStruct(char c, SymbolType t = SymbolType.Undefined, bool b = false)
             {
                 this.Content = c;
@@ -39,13 +43,12 @@ namespace Calculator_2023
 
         private BtnStruct[,] buttons =
         {
-            {new BtnStruct('%',SymbolType.SpecialOperator), new BtnStruct('\u0152',SymbolType.ClearEntry), new BtnStruct('C',SymbolType.ClearAll), new BtnStruct('\u232B',SymbolType.BackSpace)},
-            { new BtnStruct('\u215F', SymbolType.SpecialOperator), new BtnStruct('\u00B2', SymbolType.SpecialOperator), new BtnStruct('\u221A', SymbolType.SpecialOperator), new BtnStruct('\u00F7', SymbolType.Operator)},
-            { new BtnStruct('7',SymbolType.Number,true), new BtnStruct('8',SymbolType.Number,true), new BtnStruct('9',SymbolType.Number,true), new BtnStruct('\u00D7',SymbolType.Operator)},
-            { new BtnStruct('4',SymbolType.Number,true), new BtnStruct('5',SymbolType.Number,true), new BtnStruct('6',SymbolType.Number,true), new BtnStruct('-',SymbolType.Operator)},
-            { new BtnStruct('1',SymbolType.Number,true), new BtnStruct('2',SymbolType.Number,true), new BtnStruct('3',SymbolType.Number,true), new BtnStruct('+',SymbolType.Operator)},
-            { new BtnStruct('\u00B1', SymbolType.PlusMinusSign), new BtnStruct('0',SymbolType.Number,true), new BtnStruct(',',SymbolType.DecimalPoint), new BtnStruct('=',SymbolType.Operator)},
-
+            { new BtnStruct('%',SymbolType.SpecialOperator), new BtnStruct('\u0152', SymbolType.ClearEntry), new BtnStruct('C', SymbolType.ClearAll), new BtnStruct('\u232B', SymbolType.Backspace) },
+            { new BtnStruct('\u215F',SymbolType.SpecialOperator), new BtnStruct('\u00B2',SymbolType.SpecialOperator), new BtnStruct('\u221A',SymbolType.SpecialOperator), new BtnStruct('\u00F7',SymbolType.Operator) },
+            { new BtnStruct('7',SymbolType.Number,true), new BtnStruct('8',SymbolType.Number,true), new BtnStruct('9',SymbolType.Number,true), new BtnStruct('\u00D7',SymbolType.Operator) },
+            { new BtnStruct('4',SymbolType.Number,true), new BtnStruct('5',SymbolType.Number,true), new BtnStruct('6',SymbolType.Number,true), new BtnStruct('-',SymbolType.Operator) },
+            { new BtnStruct('1',SymbolType.Number,true), new BtnStruct('2',SymbolType.Number,true), new BtnStruct('3',SymbolType.Number,true), new BtnStruct('+',SymbolType.Operator) },
+            { new BtnStruct('\u00B1',SymbolType.PlusMinusSign), new BtnStruct('0',SymbolType.Number,true), new BtnStruct(',',SymbolType.DecimalPoint), new BtnStruct('=',SymbolType.Operator) },
         };
 
         float lblResultBaseFontSize;
@@ -60,10 +63,10 @@ namespace Calculator_2023
         {
             InitializeComponent();
             lblResultBaseFontSize = lblResult.Font.Size;
-            //lblExpression.Text = "";
+            lblHistory.Text = "";
         }
 
-        private void Calculator_Load(object sender, EventArgs e)
+        private void FormMain_Load(object sender, EventArgs e)
         {
             MakeButtons(buttons.GetLength(0), buttons.GetLength(1));
         }
@@ -81,18 +84,16 @@ namespace Calculator_2023
                     Button myButton = new Button();
                     FontStyle fs = buttons[i, j].IsBold ? FontStyle.Bold : FontStyle.Regular;
                     myButton.Font = new Font("Segoe UI", 16, fs);
-                    myButton.BackColor = buttons[i, j].IsBold ? Color.White : Color.LightGray;
+                    myButton.BackColor = buttons[i, j].IsBold ? Color.White : Color.Transparent;
                     myButton.Text = buttons[i, j].Content.ToString();
                     myButton.Width = btnWidth;
                     myButton.Height = btnHeight;
                     myButton.Top = posY;
-                    myButton.Left += posX;
+                    myButton.Left = posX;
                     myButton.Tag = buttons[i, j];
                     myButton.Click += Button_Click;
                     this.Controls.Add(myButton);
                     posX += myButton.Width;
-
-                    this.Controls.Add(myButton);
                 }
                 posX = 0;
                 posY += btnHeight;
@@ -107,11 +108,12 @@ namespace Calculator_2023
             switch (clickedButtonStruct.Type)
             {
                 case SymbolType.Number:
-                    if (lblResult.Text == "0" || lastButtonClicked.Type == SymbolType.Operator)
-                    {
-                        lblResult.Text = "";
-                    }
+                    if (lastButtonClicked.Content == '=') ClearAll();
+                    if (lblResult.Text == "0" || lastButtonClicked.Type == SymbolType.Operator) lblResult.Text = "";
                     lblResult.Text += clickedButton.Text;
+                    break;
+                case SymbolType.SpecialOperator:
+                    ManageSpecialOperator(clickedButtonStruct);
                     break;
                 case SymbolType.Operator:
                     if (lastButtonClicked.Type == SymbolType.Operator && clickedButtonStruct.Content != '=')
@@ -122,85 +124,55 @@ namespace Calculator_2023
                     {
                         ManageOperator(clickedButtonStruct);
                     }
-                    if (clickedButtonStruct.Content != '=')
-                    {
-                        lblHistory.Text = operand1.ToString() + " " + clickedButton.Text;
-                    }
-                    else if (clickedButtonStruct.Content == '=' && lastButtonClicked.Content == '=')
-                    {
-                    }
-                    else
-                    {
-                        lblHistory.Text += " " + operand2.ToString() + " " + clickedButton.Text;
-                    }
-                    break;
-                case SymbolType.SpecialOperator:
-                    ManageSpecialOperator(clickedButtonStruct);
+                    WriteExpression(clickedButtonStruct);
                     break;
                 case SymbolType.DecimalPoint:
                     if (lblResult.Text.IndexOf(",") == -1)
-                    {
                         lblResult.Text += clickedButton.Text;
-                    }
                     break;
                 case SymbolType.PlusMinusSign:
                     if (lblResult.Text != "0")
-                    {
                         if (lblResult.Text.IndexOf("-") == -1)
-                        {
                             lblResult.Text = "-" + lblResult.Text;
-                        }
                         else
-                        {
                             lblResult.Text = lblResult.Text.Substring(1);
-                        }
-                    }
                     if (lastButtonClicked.Type == SymbolType.Operator)
                     {
                         operand1 = -operand1;
                     }
                     break;
-                case SymbolType.BackSpace:
+                case SymbolType.Backspace:
                     if (lastButtonClicked.Type != SymbolType.Operator && lastButtonClicked.Type != SymbolType.SpecialOperator)
                     {
                         lblResult.Text = lblResult.Text.Substring(0, lblResult.Text.Length - 1);
                         if (lblResult.Text.Length == 0 || lblResult.Text == "-0")
-                        {
                             lblResult.Text = "0";
-                        }
                     }
                     break;
                 case SymbolType.ClearAll:
                     ClearAll();
                     break;
                 case SymbolType.ClearEntry:
-                    if (lastButtonClicked.Content == '=')
-                    {
-                        ClearAll();
-                    }
-                    else
-                    {
-                        lblResult.Text = "0";
-                    }
+                    if (lastButtonClicked.Content == '=') ClearAll();
+                    else lblResult.Text = "0";
                     break;
                 case SymbolType.Undefined:
-
                     break;
                 default:
                     break;
             }
-            if (clickedButtonStruct.Type != SymbolType.BackSpace && clickedButtonStruct.Type != SymbolType.PlusMinusSign)
+            if (clickedButtonStruct.Type != SymbolType.Backspace && clickedButtonStruct.Type != SymbolType.PlusMinusSign)
                 lastButtonClicked = clickedButtonStruct;
         }
 
         private void ClearAll()
         {
-            //lblHistory.Text = " ";
             operand1 = 0;
             operand2 = 0;
             result = 0;
-            lblResult.Text = "0";
             lastOperator = ' ';
+            lblResult.Text = "0";
+            lblHistory.Text = "";
         }
 
         private void ManageSpecialOperator(BtnStruct clickedButtonStruct)
@@ -208,22 +180,23 @@ namespace Calculator_2023
             operand2 = decimal.Parse(lblResult.Text);
             switch (clickedButtonStruct.Content)
             {
-                case '\u221A':
-                    result = (decimal)Math.Sqrt((double)operand2);
-                    break;
                 case '%':
                     result = operand1 * operand2 / 100;
                     break;
-                case '\u00B2':
+                case '\u215F':  // 1/x
+                    result = 1 / operand2;
+                    break;
+                case '\u00B2':  // x^2
                     result = operand2 * operand2;
                     break;
-                case '\u215F':
-                    result = 1 / operand2;
+                case '\u221A':  // sqr(x)
+                    result = (decimal)Math.Sqrt((double)operand2);
                     break;
                 default:
                     break;
             }
             lblResult.Text = result.ToString();
+            lblHistory.Text = "";
         }
 
         private void ManageOperator(BtnStruct clickedButtonStruct)
@@ -250,35 +223,42 @@ namespace Calculator_2023
                     case '-':
                         result = operand1 - operand2;
                         break;
-                    case '\u00D7':
+                    case '×':
                         result = operand1 * operand2;
                         break;
-                    case '\u00F7':
+                    case '÷':
                         result = operand1 / operand2;
                         break;
                     default:
                         break;
                 }
-                operand1 = result;
+                lblResult.Text = result.ToString();
                 if (clickedButtonStruct.Content != '=')
                 {
                     lastOperator = clickedButtonStruct.Content;
-                    if (lastButtonClicked.Content == '=') operand2 = 0;
-
+                    if (lastButtonClicked.Content == '=')
+                    {
+                        operand2 = 0;
+                    }
                 }
-                lblResult.Text = result.ToString();
+                operand1 = result;
             }
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
 
         private void WriteExpression(BtnStruct clickedButtonStruct)
         {
             if (clickedButtonStruct.Content == '=')
             {
-                //lblExpression.Text += operand2.ToString() + "=";
+                lblHistory.Text += operand2.ToString() + "=";
             }
             else
             {
-                //lblExpression.Text = operand1.ToString() + clickedButtonStruct.Content;
+                lblHistory.Text = operand1.ToString() + clickedButtonStruct.Content;
             }
         }
 
@@ -289,35 +269,30 @@ namespace Calculator_2023
                 lblResult.Text = "0";
                 return;
             }
-            if (lblResult.Text.Length > 0)
+            if (lblResult.Text.Length>0)
             {
                 decimal num = decimal.Parse(lblResult.Text);
-                string stOut = "";
                 NumberFormatInfo nfi = new CultureInfo("it-IT", false).NumberFormat;
                 int decimalSeparatorPosition = lblResult.Text.IndexOf(",");
-                nfi.NumberDecimalDigits = decimalSeparatorPosition == -1 ?
-                    0 :
-                    lblResult.Text.Length - decimalSeparatorPosition - 1;
-                stOut = num.ToString("N", nfi);
-                if (lblResult.Text.IndexOf(",") == lblResult.Text.Length - 1)
+                nfi.NumberDecimalDigits = decimalSeparatorPosition == -1 ? 0 : lblResult.Text.Length - decimalSeparatorPosition - 1;
+                string stOut = num.ToString("N", nfi);
+                if(lblResult.Text.IndexOf(",") == lblResult.Text.Length-1)
                 {
                     stOut += ",";
                 }
                 lblResult.Text = stOut;
-
             }
             if (lblResult.Text.Length > lblResultMaxDigit)
             {
                 lblResult.Text = lblResult.Text.Substring(0, lblResultMaxDigit);
             }
-
             int textWidth = TextRenderer.MeasureText(lblResult.Text, lblResult.Font).Width;
             float newSize = lblResult.Font.Size * (((float)lblResult.Size.Width - lblResultWidthMargin) / textWidth);
-            if (newSize > lblResultBaseFontSize)
+            if(newSize>lblResultBaseFontSize)
             {
                 newSize = lblResultBaseFontSize;
             }
-            lblResult.Font = new Font("Segoe UI", newSize, FontStyle.Bold);
+            lblResult.Font = new Font("Segoe UI", newSize, FontStyle.Regular);
         }
     }
 }
